@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  background: #080b12;
+  color: #f7f8fb;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    linear-gradient(180deg, rgba(8, 11, 18, 0.92), #080b12 420px),
+    radial-gradient(circle at 50% 0, rgba(54, 197, 240, 0.16), transparent 520px);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #36c5f0;
+  outline-offset: 2px;
+}
+
+.field {
+  @apply w-full rounded-md border border-vault-line bg-vault-panel px-3 py-2 text-sm text-vault-text placeholder:text-vault-muted;
+}
+
+.btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-md border border-vault-line bg-vault-panel2 px-3 py-2 text-sm font-medium text-vault-text transition hover:border-vault-cyan hover:text-white disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+.btn-primary {
+  @apply border-vault-cyan bg-vault-cyan text-slate-950 hover:bg-cyan-300;
+}
+
+.surface {
+  @apply rounded-lg border border-vault-line bg-vault-panel shadow-glow;
+}
+
+.badge {
+  @apply inline-flex items-center rounded px-2 py-1 text-xs font-semibold;
+}
