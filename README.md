@@ -47,7 +47,7 @@ The repository can also use GitHub's built-in Pages configuration:
 On first open, 4K Vault asks how provider access should work:
 
 - **Protected proxy**: recommended for Disq, paid barcode APIs, shared keys, and any key that must not be exposed. Deploy a Cloudflare Worker, Netlify Function, or Vercel Function, store provider keys as server-side environment secrets, then paste the proxy URLs into the setup dialog.
-- **Personal browser keys**: useful for personal TMDb or provider keys. Keys are stored only in that browser's localStorage and are never committed to GitHub, but they are still visible to that browser user and in that browser's network requests.
+- **Direct browser access**: useful for public endpoints and personal TMDb/provider keys. Keys are stored only in that browser's localStorage and are never committed to GitHub, but they are still visible to that browser user and in that browser's network requests.
 - **Manual/offline only**: disables provider network calls. Manual release entry, Blu-ray.com search links, IndexedDB storage, PWA offline use, and import/export still work.
 
 Provider settings can be changed later under **Settings**. No private API keys are committed to this repository.
@@ -70,7 +70,7 @@ Then use these setup values in 4K Vault:
 
 ## Provider Model
 
-Physical release providers are the database spine. Disq Product API is primary for UPC/EAN/GTIN/ASIN lookup. UPCMDB is secondary. UPCitemdb, Go-UPC, Barcode Lookup, and UPCDatabase.org are fallback sources and are treated as unverified unless their records clearly confirm physical 4K UHD Blu-ray format.
+Physical release providers are the database spine. Disq Product API is primary for UPC/EAN/GTIN/ASIN lookup and uses `https://product.disqapis.com/graphql`. Disq's public docs do not expose title search; use barcode/ASIN lookup for Disq-backed release matching. UPCMDB is secondary. UPCitemdb, Go-UPC, Barcode Lookup, and UPCDatabase.org are fallback sources and are treated as unverified unless their records clearly confirm physical 4K UHD Blu-ray format.
 
 TMDb is metadata only. It may enrich posters, backdrops, synopsis, cast, crew, runtime, similar movies, and recommendations, but TMDb must never prove a physical 4K disc exists.
 

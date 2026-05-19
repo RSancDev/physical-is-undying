@@ -18,7 +18,7 @@ export default {
       headers.set("Authorization", `Bearer ${env.TMDB_BEARER_TOKEN}`);
     }
     if (target.includes("disqapis.com") && env.DISQ_API_KEY) {
-      headers.set("Authorization", `Bearer ${env.DISQ_API_KEY}`);
+      headers.set("apikey", env.DISQ_API_KEY);
     }
 
     const proxied = await fetch(target, {
@@ -36,7 +36,7 @@ export default {
 
 function targetForRequest(url) {
   if (url.pathname === "/providers") {
-    return "https://api.disqapis.com/graphql";
+    return "https://product.disqapis.com/graphql";
   }
 
   if (url.pathname.startsWith("/tmdb/")) {

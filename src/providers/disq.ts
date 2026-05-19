@@ -31,7 +31,7 @@ query ProductLookup($query: ProductLookupQuery!) {
 }`;
 
 function authHeaders(settings: ProviderSettings): HeadersInit {
-  return settings.providerMode === "browserKeys" && settings.disqApiKey ? { Authorization: `Bearer ${settings.disqApiKey}` } : {};
+  return settings.providerMode === "browserKeys" && settings.disqApiKey ? { apikey: settings.disqApiKey } : {};
 }
 
 function mapDisqProduct(product: any): PhysicalReleaseCandidate {
@@ -63,6 +63,9 @@ export function createDisqProvider(settings: ProviderSettings): PhysicalReleaseP
   async function lookup(value: string, type?: "gtin" | "asin"): Promise<PhysicalReleaseCandidate[]> {
     if (!value.trim()) return [];
     const endpoint = (settings.providerMode === "proxy" && settings.providerProxyUrl ? settings.providerProxyUrl : settings.disqEndpoint).trim();
+    if (settings.providerMode === "browserKeys" && !settings.disqApiKey) {
+      throw new Error("Disq Product API requires an API key. Use a Disq key, a protected proxy, or fallback/manual entry.");
+    }
     const response = await fetch(endpoint, {
       method: "POST",
       headers: {

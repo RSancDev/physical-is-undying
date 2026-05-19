@@ -27,13 +27,17 @@ function providerErrorMessage(providerName: string, error: unknown): string {
   return `${providerName}: ${message}`;
 }
 
+function looksLikeAsin(value: string): boolean {
+  return /^[A-Z0-9]{10}$/i.test(value.trim()) && /[A-Z]/i.test(value);
+}
+
 export async function searchPhysicalByBarcode(code: string) {
   const providers = physicalProviders();
   const results: PhysicalReleaseCandidate[] = [];
   const errors: string[] = [];
   for (const provider of providers) {
     try {
-      const matches = await provider.lookupByBarcode(code);
+      const matches = looksLikeAsin(code) ? await provider.lookupByAsin(code.trim()) : await provider.lookupByBarcode(code);
       results.push(...matches);
       if (matches.length > 0 && /Disq|UPCMDB/i.test(provider.name)) break;
     } catch (error) {

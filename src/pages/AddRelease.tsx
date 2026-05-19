@@ -33,10 +33,17 @@ export function AddRelease() {
   async function runSearch() {
     setBusy(true);
     setError("");
+    setResults([]);
     try {
       const next = mode === "barcode" ? await searchPhysicalByBarcode(query) : await searchPhysicalByTitle(query);
       setResults(next);
-      if (next.length === 0) setError("No provider candidates found. Use manual entry or Blu-ray.com reference search.");
+      if (next.length === 0) {
+        setError(
+          mode === "title"
+            ? "No physical release candidates found by title. Disq currently supports UPC/EAN/GTIN/ASIN lookup, not title search; try a barcode/ASIN, Blu-ray.com search, or manual entry."
+            : "No provider candidates found for that UPC/EAN/GTIN/ASIN. Confirm the code, try Blu-ray.com search, or add the release manually."
+        );
+      }
     } catch (searchError) {
       setError(searchError instanceof Error ? searchError.message : String(searchError));
     } finally {
@@ -74,7 +81,7 @@ export function AddRelease() {
       <section className="space-y-4">
         <div>
           <h1 className="text-2xl font-bold">Add Release</h1>
-          <p className="text-sm text-vault-muted">Search release/product sources first. TMDb enrichment is metadata only and never validates physical 4K status.</p>
+          <p className="text-sm text-vault-muted">Search UPC, EAN, GTIN, or ASIN first. TMDb enrichment is metadata only and never validates physical 4K status.</p>
         </div>
         <div className="surface p-4">
           <div className="mb-4 flex flex-wrap gap-2">

@@ -46,7 +46,7 @@ export const providerSetupChoices: ProviderSetupChoice[] = [
 export const defaultProviderSettings: ProviderSettings = {
   setupComplete: false,
   providerMode: "unset",
-  disqEndpoint: import.meta.env.VITE_DISQ_ENDPOINT || "https://api.disqapis.com/graphql",
+  disqEndpoint: import.meta.env.VITE_DISQ_ENDPOINT || "https://product.disqapis.com/graphql",
   disqApiKey: "",
   upcItemDbEndpoint: "https://api.upcitemdb.com/prod/trial",
   upcmdbEndpoint: "",
