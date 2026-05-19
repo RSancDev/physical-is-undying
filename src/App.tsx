@@ -1,5 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { Layout } from "./components/Layout";
+import { ProviderSetupDialog } from "./components/ProviderSetupDialog";
+import { getProviderSetupState } from "./lib/settings";
 import { AddRelease } from "./pages/AddRelease";
 import { Collection } from "./pages/Collection";
 import { Dashboard } from "./pages/Dashboard";
@@ -8,8 +10,11 @@ import { ReleaseDetail } from "./pages/ReleaseDetail";
 import { Settings } from "./pages/Settings";
 import { Stats } from "./pages/Stats";
 import { Wishlist } from "./pages/Wishlist";
+import { useState } from "react";
 
 export default function App() {
+  const [setupState, setSetupState] = useState(getProviderSetupState);
+
   return (
     <Layout>
       <Routes>
@@ -23,6 +28,7 @@ export default function App() {
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      {setupState.requiresSetup && <ProviderSetupDialog onComplete={() => setSetupState(getProviderSetupState())} />}
     </Layout>
   );
 }
