@@ -24,4 +24,8 @@ interface ReferenceProvider {
 }
 ```
 
-Physical release providers are authoritative for whether a product is a physical 4K Ultra HD Blu-ray release. TMDb enriches metadata only and cannot validate physical media existence. Blu-ray.com is a reference provider only: search URLs are generated and user-pasted URLs/specs can be stored, but pages are not scraped.
+Physical release providers are authoritative for whether a product is a physical 4K Ultra HD Blu-ray release. TMDb enriches metadata only and cannot validate physical media existence.
+
+Blu-ray.com and 4KFilmDb are reference providers only: search URLs are generated, links open in a new tab, and user-pasted URLs/specs can be stored. Pages are not scraped.
+
+The 4KFilmDb UHD Reference page visibly uses a published CSV plus client-side filtering and describes a hand-verified, multi-reviewer scoring workflow. Because the data and scoring are not licensed to this project, 4K Vault only creates search links with `build4KFilmDbSearchUrl(title, year)` and never treats 4KFilmDb or TMDb as automatic physical-release proof.
