@@ -8,19 +8,30 @@ function yearFromDate(date?: string): number | undefined {
 }
 
 function tmdbUrl(path: string, settings: ProviderSettings, params: Record<string, string> = {}): string {
-  const base = settings.tmdbProxyUrl || "https://api.themoviedb.org/3";
+  const base = (settings.providerMode === "proxy" && settings.tmdbProxyUrl ? settings.tmdbProxyUrl : "https://api.themoviedb.org/3").replace(/\/$/, "");
   const url = new URL(`${base}${path}`);
   Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, value));
-  if (!settings.tmdbProxyUrl && settings.tmdbApiKey) url.searchParams.set("api_key", settings.tmdbApiKey);
+  if (settings.providerMode === "browserKeys" && settings.tmdbApiKey && !settings.tmdbApiKey.startsWith("eyJ")) {
+    url.searchParams.set("api_key", settings.tmdbApiKey);
+  }
   return url.toString();
 }
 
 async function tmdbFetch(path: string, settings: ProviderSettings, params: Record<string, string> = {}) {
-  if (!settings.tmdbApiKey && !settings.tmdbProxyUrl) {
-    throw new Error("Configure a TMDb API key or proxy endpoint in Settings.");
+  if (settings.providerMode === "manual" || settings.providerMode === "unset") {
+    throw new Error("TMDb is disabled in manual/offline provider mode.");
+  }
+  if (settings.providerMode === "proxy" && !settings.tmdbProxyUrl) {
+    throw new Error("Configure a TMDb proxy endpoint in Settings.");
+  }
+  if (settings.providerMode === "browserKeys" && !settings.tmdbApiKey) {
+    throw new Error("Configure a TMDb API key in Settings.");
   }
   const response = await fetch(tmdbUrl(path, settings, params), {
-    headers: settings.tmdbProxyUrl || settings.tmdbApiKey?.startsWith("eyJ") ? { Authorization: `Bearer ${settings.tmdbApiKey ?? ""}` } : {}
+    headers:
+      settings.providerMode === "browserKeys" && settings.tmdbApiKey?.startsWith("eyJ")
+        ? { Authorization: `Bearer ${settings.tmdbApiKey}` }
+        : {}
   });
   if (!response.ok) throw new Error(`TMDb request failed: ${response.status}`);
   return response.json();
