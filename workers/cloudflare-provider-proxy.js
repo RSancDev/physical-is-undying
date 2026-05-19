@@ -5,23 +5,14 @@ export default {
     }
 
     const url = new URL(request.url);
-    const target = url.searchParams.get("target");
+    const target = targetForRequest(url);
     if (!target) {
-      return json({ error: "Missing target URL" }, 400);
-    }
-
-    const allowList = [
-      "https://api.disqapis.com/graphql",
-      "https://api.themoviedb.org/3",
-      "https://api.upcitemdb.com"
-    ];
-
-    if (!allowList.some((allowed) => target.startsWith(allowed))) {
-      return json({ error: "Target is not allow-listed" }, 403);
+      return json({ error: "Use /providers for Disq GraphQL or /tmdb/* for TMDb." }, 404);
     }
 
     const headers = new Headers(request.headers);
     headers.delete("host");
+    headers.delete("authorization");
 
     if (target.includes("themoviedb.org") && env.TMDB_BEARER_TOKEN) {
       headers.set("Authorization", `Bearer ${env.TMDB_BEARER_TOKEN}`);
@@ -42,6 +33,19 @@ export default {
     });
   }
 };
+
+function targetForRequest(url) {
+  if (url.pathname === "/providers") {
+    return "https://api.disqapis.com/graphql";
+  }
+
+  if (url.pathname.startsWith("/tmdb/")) {
+    const tmdbPath = url.pathname.replace(/^\/tmdb/, "");
+    return `https://api.themoviedb.org/3${tmdbPath}${url.search}`;
+  }
+
+  return "";
+}
 
 function corsHeaders() {
   return {
