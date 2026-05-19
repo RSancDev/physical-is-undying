@@ -5,6 +5,7 @@ import { getProviderSetupState } from "./lib/settings";
 import { AddRelease } from "./pages/AddRelease";
 import { Collection } from "./pages/Collection";
 import { Dashboard } from "./pages/Dashboard";
+import { Discover } from "./pages/Discover";
 import { Recommendations } from "./pages/Recommendations";
 import { ReleaseDetail } from "./pages/ReleaseDetail";
 import { Settings } from "./pages/Settings";
@@ -20,6 +21,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/collection" element={<Collection />} />
+        <Route path="/discover" element={<Discover />} />
         <Route path="/add" element={<AddRelease />} />
         <Route path="/release/:id" element={<ReleaseDetail />} />
         <Route path="/recommendations" element={<Recommendations />} />
