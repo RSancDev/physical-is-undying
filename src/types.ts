@@ -231,3 +231,17 @@ export type ReferenceProvider = {
 };
 
 export type ReleaseDraft = Partial<CollectionItem> & Pick<CollectionItem, "title" | "format">;
+
+export type TitleSearchResult = {
+  kind: "provider" | "metadata" | "manual-query";
+  title: string;
+  year?: number;
+  candidate?: PhysicalReleaseCandidate;
+  metadata?: MovieMetadataCandidate;
+  validation: ValidationResult;
+  requiresManualConfirmation: boolean;
+  referenceUrls: {
+    bluRayDotCom: string;
+    fourKFilmDb: string;
+  };
+};
