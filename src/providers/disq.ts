@@ -31,7 +31,7 @@ query ProductLookup($query: ProductLookupQuery!) {
 }`;
 
 function authHeaders(settings: ProviderSettings): HeadersInit {
-  return settings.disqApiKey ? { Authorization: `Bearer ${settings.disqApiKey}` } : {};
+  return settings.providerMode === "browserKeys" && settings.disqApiKey ? { Authorization: `Bearer ${settings.disqApiKey}` } : {};
 }
 
 function mapDisqProduct(product: any): PhysicalReleaseCandidate {
@@ -62,7 +62,7 @@ function mapDisqProduct(product: any): PhysicalReleaseCandidate {
 export function createDisqProvider(settings: ProviderSettings): PhysicalReleaseProvider {
   async function lookup(value: string, type?: "gtin" | "asin"): Promise<PhysicalReleaseCandidate[]> {
     if (!value.trim()) return [];
-    const endpoint = settings.providerProxyUrl || settings.disqEndpoint;
+    const endpoint = (settings.providerMode === "proxy" && settings.providerProxyUrl ? settings.providerProxyUrl : settings.disqEndpoint).trim();
     const response = await fetch(endpoint, {
       method: "POST",
       headers: {
