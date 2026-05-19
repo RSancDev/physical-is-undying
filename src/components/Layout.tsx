@@ -1,10 +1,11 @@
-import { Archive, BarChart3, Film, Heart, Home, PlusCircle, Settings, Sparkles } from "lucide-react";
+import { Archive, BarChart3, Compass, Film, Heart, Home, PlusCircle, Settings, Sparkles } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import type { ReactNode } from "react";
 
 const navItems = [
   { to: "/", label: "Dashboard", icon: Home },
   { to: "/collection", label: "Collection", icon: Film },
+  { to: "/discover", label: "Discover", icon: Compass },
   { to: "/add", label: "Add", icon: PlusCircle },
   { to: "/recommendations", label: "Recs", icon: Sparkles },
   { to: "/wishlist", label: "Wishlist", icon: Heart },
