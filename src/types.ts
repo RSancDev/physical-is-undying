@@ -189,7 +189,11 @@ export type MovieMetadata = MovieMetadataCandidate & {
   imdbId?: string;
 };
 
+export type ProviderMode = "unset" | "manual" | "browserKeys" | "proxy";
+
 export type ProviderSettings = {
+  setupComplete?: boolean;
+  providerMode?: ProviderMode;
   disqEndpoint: string;
   disqApiKey?: string;
   upcmdbEndpoint?: string;
