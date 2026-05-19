@@ -10,7 +10,7 @@
 - Physical release provider interfaces for Disq Product API, UPCMDB, UPCitemdb, Go-UPC, Barcode Lookup, and UPCDatabase.org.
 - TMDb metadata enrichment for posters, synopsis, credits, runtime, genres, and recommendations.
 - Validation that separates physical-release proof from movie metadata.
-- Manual Blu-ray.com reference search and pasted URL/spec storage. The app does not scrape Blu-ray.com.
+- Manual Blu-ray.com and 4KFilmDb reference search links. The app does not scrape either site.
 - Collection, watched/unwatched, personal ratings, wishlist, recommendations, stats, settings, JSON export/import, and CSV export/import.
 
 ## Setup
@@ -75,6 +75,15 @@ Physical release providers are the database spine. Disq Product API is primary f
 TMDb is metadata only. It may enrich posters, backdrops, synopsis, cast, crew, runtime, similar movies, and recommendations, but TMDb must never prove a physical 4K disc exists.
 
 Blu-ray.com is a manual reference companion. 4K Vault generates search URLs, opens them in a new tab, and stores user-pasted release/review URLs and manually entered specs. It does not scrape Blu-ray.com pages.
+
+4KFilmDb is also a reference companion only. Its UHD Reference page visibly loads a published Google Sheets CSV in the browser, filters and sorts entries client-side, and describes a hand-verified consensus workflow based on multiple technical review sources. Its terms state that custom scoring systems are proprietary, so 4K Vault does not ingest, bundle, cache, or copy 4KFilmDb data unless explicit permission is provided. The app only builds a manual search URL such as `https://4kfilmdb.com/uhd-reference/?q=The%20Thing%201982`.
+
+Title search combines these rules:
+
+- Physical release providers remain the only automatic proof source.
+- TMDb title matches are metadata only and require manual confirmation.
+- Blu-ray.com and 4KFilmDb links help the user research the disc manually.
+- If no provider can validate the title, the app can still add an owned or wishlist item only as a manually confirmed 4K UHD Blu-ray release.
 
 ## Validation
 
