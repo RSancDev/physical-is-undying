@@ -43,17 +43,14 @@ describe("provider setup settings", () => {
     });
   });
 
-  it("stores browser-key mode locally without requiring proxy endpoints", () => {
-    completeProviderSetup("browserKeys", {
-      tmdbApiKey: "tmdb-user-key",
-      disqApiKey: "disq-user-key"
-    });
+  it("stores direct browser mode without requiring keys or proxy endpoints", () => {
+    completeProviderSetup("browserKeys");
 
     expect(getProviderSettings()).toMatchObject({
       setupComplete: true,
       providerMode: "browserKeys",
-      tmdbApiKey: "tmdb-user-key",
-      disqApiKey: "disq-user-key"
+      tmdbApiKey: "",
+      disqApiKey: ""
     });
   });
 
