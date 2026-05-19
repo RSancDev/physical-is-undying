@@ -32,9 +32,9 @@ export const providerSetupChoices: ProviderSetupChoice[] = [
   },
   {
     mode: "browserKeys",
-    title: "Use my own browser keys",
-    summary: "Keys are entered on this device and stored only in this browser. They are never committed to GitHub.",
-    warning: "Frontend keys can still be seen by the person using this browser and in that browser's network requests."
+    title: "Use direct browser access",
+    summary: "Call public provider endpoints directly from this browser. Personal API keys are optional and stay on this device.",
+    warning: "Any frontend key used in this mode can be seen by the person using this browser and in that browser's network requests."
   },
   {
     mode: "manual",
