@@ -2,7 +2,7 @@ import { createDisqProvider } from "./disq";
 import { createConfigurableBarcodeProvider, createUpcItemDbProvider } from "./genericBarcode";
 import { createTmdbProvider } from "./tmdb";
 import { getProviderSettings } from "../lib/settings";
-import type { MovieMetadataProvider, PhysicalReleaseProvider } from "../types";
+import type { MovieMetadataProvider, PhysicalReleaseCandidate, PhysicalReleaseProvider } from "../types";
 
 export function physicalProviders(): PhysicalReleaseProvider[] {
   const settings = getProviderSettings();
@@ -22,35 +22,42 @@ export function metadataProvider(): MovieMetadataProvider {
   return createTmdbProvider(getProviderSettings());
 }
 
+function providerErrorMessage(providerName: string, error: unknown): string {
+  const message = error instanceof Error ? error.message : String(error);
+  return `${providerName}: ${message}`;
+}
+
 export async function searchPhysicalByBarcode(code: string) {
   const providers = physicalProviders();
-  const results = [];
+  const results: PhysicalReleaseCandidate[] = [];
+  const errors: string[] = [];
   for (const provider of providers) {
     try {
       const matches = await provider.lookupByBarcode(code);
       results.push(...matches);
       if (matches.length > 0 && /Disq|UPCMDB/i.test(provider.name)) break;
     } catch (error) {
-      results.push({
-        provider: provider.name,
-        title: `Provider error for ${code}`,
-        format: "Unknown",
-        mediaType: "unknown" as const,
-        raw: { error: error instanceof Error ? error.message : String(error) }
-      });
+      errors.push(providerErrorMessage(provider.name, error));
     }
+  }
+  if (results.length === 0 && errors.length > 0) {
+    throw new Error(`Provider lookup failed. ${errors.join(" ")}`);
   }
   return results;
 }
 
 export async function searchPhysicalByTitle(query: string) {
-  const results = [];
+  const results: PhysicalReleaseCandidate[] = [];
+  const errors: string[] = [];
   for (const provider of physicalProviders()) {
     try {
       results.push(...(await provider.searchByTitle(query)));
-    } catch {
-      continue;
+    } catch (error) {
+      errors.push(providerErrorMessage(provider.name, error));
     }
+  }
+  if (results.length === 0 && errors.length > 0) {
+    throw new Error(`Provider lookup failed. ${errors.join(" ")}`);
   }
   return results;
 }
