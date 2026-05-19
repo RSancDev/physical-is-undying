@@ -6,13 +6,15 @@ import type { MovieMetadataProvider, PhysicalReleaseProvider } from "../types";
 
 export function physicalProviders(): PhysicalReleaseProvider[] {
   const settings = getProviderSettings();
+  if (settings.providerMode === "manual" || settings.providerMode === "unset") return [];
+  const providerKey = (key?: string) => (settings.providerMode === "browserKeys" ? key : undefined);
   return [
     createDisqProvider(settings),
-    createConfigurableBarcodeProvider("UPCMDB", settings.upcmdbEndpoint, settings.upcmdbApiKey),
+    createConfigurableBarcodeProvider("UPCMDB", settings.upcmdbEndpoint, providerKey(settings.upcmdbApiKey)),
     createUpcItemDbProvider(settings),
-    createConfigurableBarcodeProvider("Go-UPC", settings.goUpcEndpoint, settings.goUpcApiKey),
-    createConfigurableBarcodeProvider("Barcode Lookup", settings.barcodeLookupEndpoint, settings.barcodeLookupApiKey),
-    createConfigurableBarcodeProvider("UPCDatabase.org", settings.upcDatabaseEndpoint, settings.upcDatabaseApiKey)
+    createConfigurableBarcodeProvider("Go-UPC", settings.goUpcEndpoint, providerKey(settings.goUpcApiKey)),
+    createConfigurableBarcodeProvider("Barcode Lookup", settings.barcodeLookupEndpoint, providerKey(settings.barcodeLookupApiKey)),
+    createConfigurableBarcodeProvider("UPCDatabase.org", settings.upcDatabaseEndpoint, providerKey(settings.upcDatabaseApiKey))
   ];
 }
 
