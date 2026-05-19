@@ -32,11 +32,6 @@ export function ProviderSetupDialog({ onComplete }: { onComplete: (settings: Pro
       return;
     }
 
-    if (mode === "browserKeys" && !draft.tmdbApiKey?.trim() && !draft.disqApiKey?.trim()) {
-      setError("Enter at least one personal API key, or choose another mode.");
-      return;
-    }
-
     onComplete(completeProviderSetup(mode, draft));
   }
 
@@ -95,8 +90,9 @@ export function ProviderSetupDialog({ onComplete }: { onComplete: (settings: Pro
 
         {mode === "browserKeys" && (
           <div className="mt-5 grid gap-3 md:grid-cols-2">
-            <Field label="TMDb API key" type="password" value={draft.tmdbApiKey ?? ""} onChange={(value) => update("tmdbApiKey", value)} />
-            <Field label="Disq API key" type="password" value={draft.disqApiKey ?? ""} onChange={(value) => update("disqApiKey", value)} />
+            <Field label="Disq GraphQL endpoint" value={draft.disqEndpoint ?? ""} onChange={(value) => update("disqEndpoint", value)} />
+            <Field label="TMDb API key, optional" type="password" value={draft.tmdbApiKey ?? ""} onChange={(value) => update("tmdbApiKey", value)} />
+            <Field label="Disq API key, optional" type="password" value={draft.disqApiKey ?? ""} onChange={(value) => update("disqApiKey", value)} />
             <Field label="UPCMDB API key" type="password" value={draft.upcmdbApiKey ?? ""} onChange={(value) => update("upcmdbApiKey", value)} />
             <Field label="Barcode Lookup API key" type="password" value={draft.barcodeLookupApiKey ?? ""} onChange={(value) => update("barcodeLookupApiKey", value)} />
           </div>
