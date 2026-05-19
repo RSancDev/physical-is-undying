@@ -18,7 +18,7 @@ describe("ProviderSetupDialog", () => {
     render(<ProviderSetupDialog onComplete={() => undefined} />);
 
     expect(screen.getByText("Use a protected proxy")).toBeInTheDocument();
-    expect(screen.getByText("Use my own browser keys")).toBeInTheDocument();
+    expect(screen.getByText("Use direct browser access")).toBeInTheDocument();
     expect(screen.getByText("Manual/offline only")).toBeInTheDocument();
   });
 
@@ -31,6 +31,20 @@ describe("ProviderSetupDialog", () => {
     expect(onComplete).toHaveBeenCalledTimes(1);
     expect(getProviderSetupState()).toMatchObject({
       mode: "manual",
+      requiresSetup: false
+    });
+  });
+
+  it("can complete direct browser setup without keys", () => {
+    const onComplete = vi.fn();
+    render(<ProviderSetupDialog onComplete={onComplete} />);
+
+    fireEvent.click(screen.getByRole("button", { name: /use direct browser access/i }));
+    fireEvent.click(screen.getByRole("button", { name: /save setup/i }));
+
+    expect(onComplete).toHaveBeenCalledTimes(1);
+    expect(getProviderSetupState()).toMatchObject({
+      mode: "browserKeys",
       requiresSetup: false
     });
   });
