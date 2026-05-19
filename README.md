@@ -44,9 +44,29 @@ The repository can also use GitHub's built-in Pages configuration:
 
 ## API Configuration
 
-Provider settings are entered in the app under **Settings** and stored in localStorage. No private API keys are committed.
+On first open, 4K Vault asks how provider access should work:
 
-`.env.example` documents optional local variables, but a public GitHub Pages frontend cannot keep secrets private. If a provider key must be protected, deploy a proxy such as `workers/cloudflare-provider-proxy.js` and put the proxy URL in Settings.
+- **Protected proxy**: recommended for Disq, paid barcode APIs, shared keys, and any key that must not be exposed. Deploy a Cloudflare Worker, Netlify Function, or Vercel Function, store provider keys as server-side environment secrets, then paste the proxy URLs into the setup dialog.
+- **Personal browser keys**: useful for personal TMDb or provider keys. Keys are stored only in that browser's localStorage and are never committed to GitHub, but they are still visible to that browser user and in that browser's network requests.
+- **Manual/offline only**: disables provider network calls. Manual release entry, Blu-ray.com search links, IndexedDB storage, PWA offline use, and import/export still work.
+
+Provider settings can be changed later under **Settings**. No private API keys are committed to this repository.
+
+`.env.example` documents optional public endpoint defaults only. Do not put secret keys in `VITE_*` variables for a GitHub Pages build because Vite compiles them into public frontend assets.
+
+### Cloudflare Worker proxy
+
+`workers/cloudflare-provider-proxy.js` is a minimal proxy example. Deploy it with secrets such as:
+
+```bash
+wrangler secret put DISQ_API_KEY
+wrangler secret put TMDB_BEARER_TOKEN
+```
+
+Then use these setup values in 4K Vault:
+
+- Physical provider proxy URL: `https://your-worker.example.workers.dev/providers`
+- TMDb proxy URL: `https://your-worker.example.workers.dev/tmdb`
 
 ## Provider Model
 
