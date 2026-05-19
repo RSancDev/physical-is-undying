@@ -1,11 +1,12 @@
 import { Camera, CheckCircle2, ExternalLink, Search, ShieldAlert } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { TitleSearchPanel } from "../components/TitleSearchPanel";
 import { findDuplicateMatches } from "../lib/duplicates";
 import { itemFromCandidate, manualItem } from "../lib/releaseFactory";
 import { validatePhysical4KRelease } from "../lib/validation";
 import { buildBluRaySearchUrl } from "../providers/bluRayDotCom";
-import { searchPhysicalByBarcode, searchPhysicalByTitle } from "../providers/registry";
+import { searchPhysicalByBarcode } from "../providers/registry";
 import { useCollection } from "../hooks/useCollection";
 import type { CollectionItem, PhysicalReleaseCandidate } from "../types";
 
@@ -35,14 +36,10 @@ export function AddRelease() {
     setError("");
     setResults([]);
     try {
-      const next = mode === "barcode" ? await searchPhysicalByBarcode(query) : await searchPhysicalByTitle(query);
+      const next = await searchPhysicalByBarcode(query);
       setResults(next);
       if (next.length === 0) {
-        setError(
-          mode === "title"
-            ? "No physical release candidates found by title. Disq currently supports UPC/EAN/GTIN/ASIN lookup, not title search; try a barcode/ASIN, Blu-ray.com search, or manual entry."
-            : "No provider candidates found for that UPC/EAN/GTIN/ASIN. Confirm the code, try Blu-ray.com search, or add the release manually."
-        );
+        setError("No provider candidates found for that UPC/EAN/GTIN/ASIN. Confirm the code, try title search/reference sites, or add the release manually.");
       }
     } catch (searchError) {
       setError(searchError instanceof Error ? searchError.message : String(searchError));
@@ -81,7 +78,7 @@ export function AddRelease() {
       <section className="space-y-4">
         <div>
           <h1 className="text-2xl font-bold">Add Release</h1>
-          <p className="text-sm text-vault-muted">Search UPC, EAN, GTIN, or ASIN first. TMDb enrichment is metadata only and never validates physical 4K status.</p>
+          <p className="text-sm text-vault-muted">Search UPC, EAN, GTIN, ASIN, or title. TMDb and reference sites never validate physical 4K status by themselves.</p>
         </div>
         <div className="surface p-4">
           <div className="mb-4 flex flex-wrap gap-2">
@@ -91,7 +88,15 @@ export function AddRelease() {
               </button>
             ))}
           </div>
-          {mode === "manual" ? (
+          {mode === "title" ? (
+            <TitleSearchPanel
+              items={items}
+              onSaveItem={save}
+              embedded
+              placeholder="Movie title"
+              emptyCopy="Search for physical 4K Blu-ray releases. Provider matches can validate a release; TMDb, Blu-ray.com, and 4KFilmDb are reference/manual confirmation aids only."
+            />
+          ) : mode === "manual" ? (
             <div className="space-y-3">
               <input className="field" value={manualTitle} onChange={(event) => setManualTitle(event.target.value)} placeholder="Title" />
               <input className="field" value={manualYear} onChange={(event) => setManualYear(event.target.value)} placeholder="Year" inputMode="numeric" />
@@ -140,8 +145,9 @@ export function AddRelease() {
             </div>
           )}
         </div>
-        <div className="space-y-3">
-          {candidates.map(({ candidate, validation }) => {
+        {mode === "barcode" && (
+          <div className="space-y-3">
+            {candidates.map(({ candidate, validation }) => {
             const duplicates = findDuplicateMatches(itemFromCandidate(candidate, { manualOverride: validation.status === "unverified" }), items);
             return (
               <article key={`${candidate.provider}-${candidate.providerId ?? candidate.upc ?? candidate.title}`} className="surface p-4">
@@ -171,8 +177,9 @@ export function AddRelease() {
                 {duplicates.length > 0 && <DuplicateWarning matches={duplicates} />}
               </article>
             );
-          })}
-        </div>
+            })}
+          </div>
+        )}
       </section>
       <aside className="surface h-fit p-4">
         <h2 className="font-semibold">Validation rules</h2>
